@@ -8,6 +8,7 @@
   const backToTop = document.querySelector(".back-to-top");
   const revealItems = Array.from(document.querySelectorAll(".reveal"));
   const parallaxItems = Array.from(document.querySelectorAll("[data-parallax]"));
+  const liveDistance = document.querySelector(".live-distance");
 
   if (navToggle) {
     navToggle.addEventListener("click", () => {
@@ -104,4 +105,33 @@
     updateNavigation();
     updateParallax();
   });
+
+  function startDistanceTicker() {
+    if (!liveDistance || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+
+    const min = Number(liveDistance.dataset.min || 1180);
+    const max = Number(liveDistance.dataset.max || 1480);
+    let current = 1284;
+
+    const formatDistance = (value) => `${value.toLocaleString("en-US")} km`;
+    const randomDistance = () => {
+      const drift = Math.round((Math.random() - 0.42) * 96);
+      const next = Math.min(max, Math.max(min, current + drift));
+      current = next === current ? Math.min(max, current + 17) : next;
+      return current;
+    };
+
+    window.setInterval(() => {
+      liveDistance.classList.remove("is-ticking");
+      void liveDistance.offsetWidth;
+      liveDistance.classList.add("is-ticking");
+      window.setTimeout(() => {
+        liveDistance.textContent = formatDistance(randomDistance());
+      }, 190);
+    }, 2600);
+  }
+
+  startDistanceTicker();
 })();
