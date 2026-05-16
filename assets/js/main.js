@@ -107,15 +107,35 @@
   });
 
   function startDistanceTicker() {
-    if (!liveDistance || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (!liveDistance) {
       return;
     }
 
     const min = Number(liveDistance.dataset.min || 1180);
     const max = Number(liveDistance.dataset.max || 1480);
-    let current = 1284;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let current = Number(liveDistance.dataset.value || 1284);
 
-    const formatDistance = (value) => `${value.toLocaleString("en-US")} km`;
+    const digitMarkup = Array.from({ length: 10 }, (_, digit) => `<span>${digit}</span>`).join("");
+    const formatDigits = (value) => String(value).padStart(4, "0");
+
+    liveDistance.innerHTML = `
+      <span class="digit-reel"><span class="digit-track">${digitMarkup}</span></span>
+      <span class="digit-static">,</span>
+      <span class="digit-reel"><span class="digit-track">${digitMarkup}</span></span>
+      <span class="digit-reel"><span class="digit-track">${digitMarkup}</span></span>
+      <span class="digit-reel"><span class="digit-track">${digitMarkup}</span></span>
+      <span class="distance-unit">km</span>
+    `;
+
+    const tracks = Array.from(liveDistance.querySelectorAll(".digit-track"));
+    const renderDistance = (value) => {
+      formatDigits(value).split("").forEach((digit, index) => {
+        tracks[index].style.setProperty("--digit", digit);
+      });
+      liveDistance.setAttribute("aria-label", `${value.toLocaleString("en-US")} km`);
+    };
+
     const randomDistance = () => {
       const drift = Math.round((Math.random() - 0.42) * 96);
       const next = Math.min(max, Math.max(min, current + drift));
@@ -123,13 +143,14 @@
       return current;
     };
 
+    renderDistance(current);
+
+    if (reduceMotion) {
+      return;
+    }
+
     window.setInterval(() => {
-      liveDistance.classList.remove("is-ticking");
-      void liveDistance.offsetWidth;
-      liveDistance.classList.add("is-ticking");
-      window.setTimeout(() => {
-        liveDistance.textContent = formatDistance(randomDistance());
-      }, 190);
+      renderDistance(randomDistance());
     }, 2600);
   }
 
