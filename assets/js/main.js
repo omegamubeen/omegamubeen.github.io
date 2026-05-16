@@ -9,6 +9,7 @@
   const revealItems = Array.from(document.querySelectorAll(".reveal"));
   const parallaxItems = Array.from(document.querySelectorAll("[data-parallax]"));
   const liveDistance = document.querySelector(".live-distance");
+  const stackCards = Array.from(document.querySelectorAll(".stack-pop-card"));
 
   if (navToggle) {
     navToggle.addEventListener("click", () => {
@@ -154,5 +155,88 @@
     }, 2600);
   }
 
+  function startStackCards() {
+    if (!stackCards.length) {
+      return;
+    }
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const stacks = [
+      { label: "Compose UI", icon: "bi bi-lightning-charge" },
+      { label: "Kotlin Flow", icon: "bi bi-code-slash" },
+      { label: "KMP shared", icon: "bi bi-intersect" },
+      { label: "Room cache", icon: "bi bi-database-check" },
+      { label: "Firebase", icon: "bi bi-fire" },
+      { label: "Retrofit API", icon: "bi bi-cloud-arrow-down" },
+      { label: "Coroutines", icon: "bi bi-diagram-3" },
+      { label: "Material 3", icon: "bi bi-layers" },
+      { label: "CI/CD", icon: "bi bi-rocket-takeoff" },
+      { label: "Sync first", icon: "bi bi-cloud-check" }
+    ];
+    const positions = [
+      "stack-pos-top-left",
+      "stack-pos-top-right",
+      "stack-pos-mid-left",
+      "stack-pos-mid-right",
+      "stack-pos-bottom-left",
+      "stack-pos-bottom-right"
+    ];
+    const positionSet = new Set(positions);
+
+    const pick = (items, avoid = []) => {
+      const blocked = Array.isArray(avoid) ? avoid : [avoid];
+      const available = items.filter((item) => !blocked.includes(item));
+      return available[Math.floor(Math.random() * available.length)];
+    };
+
+    const applyStack = (card, cardIndex, instant = false) => {
+      const currentPosition = positions.find((position) => card.classList.contains(position));
+      const occupiedPositions = stackCards
+        .filter((item) => item !== card)
+        .map((item) => positions.find((position) => item.classList.contains(position)))
+        .filter(Boolean);
+      const nextPosition = pick(positions, [currentPosition, ...occupiedPositions]);
+      const nextStack = stacks[Math.floor(Math.random() * stacks.length)];
+
+      const updateCard = () => {
+        card.classList.forEach((className) => {
+          if (positionSet.has(className)) {
+            card.classList.remove(className);
+          }
+        });
+
+        card.classList.add(nextPosition);
+        card.querySelector("i").className = nextStack.icon;
+        card.querySelector("span").textContent = nextStack.label;
+        card.setAttribute("aria-label", nextStack.label);
+
+        if (!instant) {
+          card.classList.remove("is-swapping");
+          card.classList.add("is-popping");
+          window.setTimeout(() => card.classList.remove("is-popping"), 620);
+        }
+      };
+
+      if (instant || reduceMotion) {
+        updateCard();
+        return;
+      }
+
+      card.classList.add("is-swapping");
+      window.setTimeout(updateCard, 260 + cardIndex * 45);
+    };
+
+    stackCards.forEach((card, index) => {
+      applyStack(card, index, true);
+
+      if (!reduceMotion) {
+        window.setInterval(() => {
+          applyStack(card, index);
+        }, 2600 + index * 950);
+      }
+    });
+  }
+
   startDistanceTicker();
+  startStackCards();
 })();
