@@ -116,16 +116,16 @@
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let current = Number(liveDistance.dataset.value || 1284);
 
-    const digitMarkup = Array.from({ length: 10 }, (_, digit) => `<span>${digit}</span>`).join("");
+    const digitMarkup = Array.from({ length: 10 }, (_, digit) => `<i>${digit}</i>`).join("");
     const formatDigits = (value) => String(value).padStart(4, "0");
 
     liveDistance.innerHTML = `
-      <span class="digit-reel"><span class="digit-track">${digitMarkup}</span></span>
-      <span class="digit-static">,</span>
-      <span class="digit-reel"><span class="digit-track">${digitMarkup}</span></span>
-      <span class="digit-reel"><span class="digit-track">${digitMarkup}</span></span>
-      <span class="digit-reel"><span class="digit-track">${digitMarkup}</span></span>
-      <span class="distance-unit">km</span>
+      <i class="digit-reel"><i class="digit-track">${digitMarkup}</i></i>
+      <i class="digit-static">,</i>
+      <i class="digit-reel"><i class="digit-track">${digitMarkup}</i></i>
+      <i class="digit-reel"><i class="digit-track">${digitMarkup}</i></i>
+      <i class="digit-reel"><i class="digit-track">${digitMarkup}</i></i>
+      <i class="distance-unit">km</i>
     `;
 
     const tracks = Array.from(liveDistance.querySelectorAll(".digit-track"));
