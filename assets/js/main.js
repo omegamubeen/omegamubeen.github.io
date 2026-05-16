@@ -165,12 +165,12 @@
       { label: "Compose UI", icon: "bi bi-lightning-charge" },
       { label: "Kotlin Flow", icon: "bi bi-code-slash" },
       { label: "KMP shared", icon: "bi bi-intersect" },
-      { label: "Room cache", icon: "bi bi-database-check" },
+      { label: "Room cache", icon: "bi bi-hdd-network" },
       { label: "Firebase", icon: "bi bi-fire" },
       { label: "Retrofit API", icon: "bi bi-cloud-arrow-down" },
       { label: "Coroutines", icon: "bi bi-diagram-3" },
       { label: "Material 3", icon: "bi bi-layers" },
-      { label: "CI/CD", icon: "bi bi-rocket-takeoff" },
+      { label: "CI/CD", icon: "bi bi-terminal" },
       { label: "Sync first", icon: "bi bi-cloud-check" }
     ];
     const positions = [
